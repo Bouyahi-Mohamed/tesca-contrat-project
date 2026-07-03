@@ -1,0 +1,136 @@
+function formatDate(value) {
+  if (!value) {
+    return '—';
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return '—';
+  }
+
+  return new Intl.DateTimeFormat('fr-FR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(date);
+}
+
+function formatReference(reference, fallbackLabel) {
+  if (!reference) {
+    return fallbackLabel;
+  }
+
+  if (typeof reference === 'string') {
+    return reference;
+  }
+
+  return reference.name || reference.email || fallbackLabel;
+}
+
+function formatContractType(type) {
+  switch (type) {
+    case 'renewable':
+      return 'CDD renewable';
+    case 'active_to_terminer':
+      return 'CDD';
+    case 'cdi':
+      return 'CDI';
+    default:
+      return type || '—';
+  }
+}
+
+function statusStyles(status) {
+  switch (status) {
+    case 'active':
+      return 'bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200';
+    case 'terminer':
+      return 'bg-slate-100 text-slate-700 ring-1 ring-slate-200';
+    case 'en_attente':
+      return 'bg-amber-100 text-amber-900 ring-1 ring-amber-200';
+    default:
+      return 'bg-slate-100 text-slate-700';
+  }
+}
+
+function ContractList({ contracts, onEdit, onDelete }) {
+  return (
+    <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-glow">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">Registry</p>
+          <h2 className="mt-2 font-display text-2xl font-bold text-slate-950">Contract list</h2>
+        </div>
+        <p className="text-sm text-slate-500">{contracts.length} records</p>
+      </div>
+
+      <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200">
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-200 text-left">
+            <thead className="bg-slate-50">
+              <tr className="text-xs uppercase tracking-[0.2em] text-slate-500">
+                <th className="px-4 py-3 font-semibold">Title</th>
+                <th className="px-4 py-3 font-semibold">Type</th>
+                <th className="px-4 py-3 font-semibold">Status</th>
+                <th className="px-4 py-3 font-semibold">Start</th>
+                <th className="px-4 py-3 font-semibold">End</th>
+                <th className="px-4 py-3 font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 bg-white">
+              {contracts.length === 0 ? (
+                <tr>
+                  <td className="px-4 py-10 text-center text-sm text-slate-500" colSpan="6">
+                    No contracts yet. Use Add contract to create the first record.
+                  </td>
+                </tr>
+              ) : (
+                contracts.map((contract) => (
+                  <tr key={contract._id} className="align-top hover:bg-slate-50/60">
+                    <td className="px-4 py-4">
+                      <div className="font-semibold text-slate-950">{contract.title}</div>
+                      <div className="mt-1 text-xs text-slate-500">
+                        User: {formatReference(contract.userId, 'Unknown user')} | Fournisseur:{' '}
+                        {formatReference(contract.fournisseurId, 'Unknown supplier')}
+                      </div>
+                    </td>
+                    <td className="px-4 py-4 text-sm text-slate-700">{formatContractType(contract.type)}</td>
+                    <td className="px-4 py-4">
+                      <span
+                        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${statusStyles(contract.status)}`}
+                      >
+                        {contract.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-4 text-sm text-slate-700">{formatDate(contract.dateDebut)}</td>
+                    <td className="px-4 py-4 text-sm text-slate-700">{formatDate(contract.dateFin)}</td>
+                    <td className="px-4 py-4">
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => onEdit(contract)}
+                          className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => onDelete(contract)}
+                          className="rounded-xl border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-700 transition hover:bg-rose-50"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default ContractList;
