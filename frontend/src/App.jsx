@@ -183,17 +183,19 @@ function App() {
   const alertContract = pendingContracts[0] || null;
 
   return (
-    <div id="top" className="min-h-screen bg-[#F6F4F0] text-slate-900 flex flex-col">
+    <div id="top" className="min-h-screen bg-[#F6F4F0] text-slate-900 flex flex-col ">
+      <div className="mt-12 -mb-12">
       <SiteHeader
-        title="Nos experts sont à votre écoute pour tout nouveau projet"
+        title="Our experts are ready to listen to you about any new project."
         primaryActionLabel="Nous contacter"
         primaryActionOnClick={() => {
           setEditingContract(null);
           setShowContractModal(true);
         }}
       />
+      </div>
 
-      <main className="mx-auto flex w-full max-w-7xl flex-col gap-8 px-4 py-10 sm:px-6 lg:px-8 flex-grow">
+      <main className="mx-auto flex w-full max-w-9xl flex-col gap-8  py-10 sm:px-6 lg:px-8 flex-grow">
 
         {error ? (
           <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-800">

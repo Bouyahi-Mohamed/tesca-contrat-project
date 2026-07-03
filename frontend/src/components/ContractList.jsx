@@ -122,14 +122,14 @@ function ContractList({ contracts, onEdit, onDelete }) {
                     <td className="px-4 py-4 text-sm text-slate-700">{formatDate(contract.dateFin)}</td>
                     <td className="px-4 py-4 text-sm text-slate-700 font-medium">{formatPrice(contract.price)}</td>
                     <td className="px-4 py-4">
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex gap-1">
                         {contract.documentUrl && (
                           <button
                             type="button"
                             onClick={() => setViewingPdfContract(contract)}
                             className="rounded-xl border border-blue-200 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-50 flex items-center"
                           >
-                            View PDF
+                            View
                           </button>
                         )}
                         <button

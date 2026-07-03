@@ -74,7 +74,8 @@ function ContractForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-3xl border border-slate-200 bg-white p-6 shadow-glow">
+    
+    <form onSubmit={handleSubmit} className="rounded-6xl border border-slate-200 bg-white p-6 shadow-glow">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">
@@ -192,6 +193,7 @@ function ContractForm({
         </button>
       </div>
     </form>
+
   );
 }
 
