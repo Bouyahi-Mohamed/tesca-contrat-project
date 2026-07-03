@@ -83,11 +83,17 @@ function App() {
     setError('');
 
     try {
-      const payload = {
-        ...formData,
-        dateDebut: formData.dateDebut,
-        dateFin: formData.type === 'cdi' ? null : formData.dateFin,
-      };
+      const payload = new FormData();
+      payload.append('title', formData.title);
+      payload.append('type', formData.type);
+      payload.append('price', formData.price);
+      if (formData.dateDebut) payload.append('dateDebut', formData.dateDebut);
+      if (formData.type !== 'cdi' && formData.dateFin) payload.append('dateFin', formData.dateFin);
+      payload.append('userId', formData.userId);
+      payload.append('fournisseurId', formData.fournisseurId);
+      if (formData.document) {
+        payload.append('document', formData.document);
+      }
 
       if (editingContract) {
         await updateContract(editingContract._id, payload);

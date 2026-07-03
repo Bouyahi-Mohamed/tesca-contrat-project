@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import PdfViewerModal from './PdfViewerModal';
+
 function formatDate(value) {
   if (!value) {
     return '—';
@@ -13,6 +16,14 @@ function formatDate(value) {
     month: 'short',
     year: 'numeric',
   }).format(date);
+}
+
+function formatPrice(value) {
+  if (value == null || value === '') return '—';
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+  }).format(value);
 }
 
 function formatReference(reference, fallbackLabel) {
@@ -53,7 +64,11 @@ function statusStyles(status) {
   }
 }
 
+const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api$/, '');
+
 function ContractList({ contracts, onEdit, onDelete }) {
+  const [viewingPdfContract, setViewingPdfContract] = useState(null);
+
   return (
     <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-glow">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
@@ -74,13 +89,14 @@ function ContractList({ contracts, onEdit, onDelete }) {
                 <th className="px-4 py-3 font-semibold">Status</th>
                 <th className="px-4 py-3 font-semibold">Start</th>
                 <th className="px-4 py-3 font-semibold">End</th>
+                <th className="px-4 py-3 font-semibold">Price</th>
                 <th className="px-4 py-3 font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 bg-white">
               {contracts.length === 0 ? (
                 <tr>
-                  <td className="px-4 py-10 text-center text-sm text-slate-500" colSpan="6">
+                  <td className="px-4 py-10 text-center text-sm text-slate-500" colSpan="7">
                     No contracts yet. Use Add contract to create the first record.
                   </td>
                 </tr>
@@ -104,8 +120,18 @@ function ContractList({ contracts, onEdit, onDelete }) {
                     </td>
                     <td className="px-4 py-4 text-sm text-slate-700">{formatDate(contract.dateDebut)}</td>
                     <td className="px-4 py-4 text-sm text-slate-700">{formatDate(contract.dateFin)}</td>
+                    <td className="px-4 py-4 text-sm text-slate-700 font-medium">{formatPrice(contract.price)}</td>
                     <td className="px-4 py-4">
                       <div className="flex flex-wrap gap-2">
+                        {contract.documentUrl && (
+                          <button
+                            type="button"
+                            onClick={() => setViewingPdfContract(contract)}
+                            className="rounded-xl border border-blue-200 px-3 py-2 text-xs font-semibold text-blue-700 transition hover:bg-blue-50 flex items-center"
+                          >
+                            View PDF
+                          </button>
+                        )}
                         <button
                           type="button"
                           onClick={() => onEdit(contract)}
@@ -129,6 +155,17 @@ function ContractList({ contracts, onEdit, onDelete }) {
           </table>
         </div>
       </div>
+
+      {viewingPdfContract && (
+        <PdfViewerModal
+          pdfUrl={`${API_BASE}${viewingPdfContract.documentUrl}`}
+          onClose={() => setViewingPdfContract(null)}
+          onReupload={() => {
+            onEdit(viewingPdfContract);
+            setViewingPdfContract(null);
+          }}
+        />
+      )}
     </section>
   );
 }

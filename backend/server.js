@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
@@ -23,6 +24,19 @@ app.use(cors());
 app.use(compression());
 app.use(express.json({ limit: '1mb' }));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.pdf')) {
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'inline');
+      // Remove X-Frame-Options and CSP to allow the frontend iframe (on a different port) to embed it
+      res.removeHeader('X-Frame-Options');
+      res.removeHeader('Content-Security-Policy');
+      res.removeHeader('Cross-Origin-Resource-Policy');
+    }
+  }
+}));
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });

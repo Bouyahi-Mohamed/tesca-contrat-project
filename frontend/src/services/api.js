@@ -28,12 +28,14 @@ export async function createFournisseur(payload) {
 }
 
 export async function createContract(payload) {
-  const { data } = await api.post('/contracts', payload);
+  const config = payload instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
+  const { data } = await api.post('/contracts', payload, config);
   return data;
 }
 
 export async function updateContract(id, payload) {
-  const { data } = await api.put(`/contracts/${id}`, payload);
+  const config = payload instanceof FormData ? { headers: { 'Content-Type': 'multipart/form-data' } } : {};
+  const { data } = await api.put(`/contracts/${id}`, payload, config);
   return data;
 }
 

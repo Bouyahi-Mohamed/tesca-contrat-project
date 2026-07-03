@@ -5,8 +5,10 @@ const emptyForm = {
   type: 'renewable',
   dateDebut: '',
   dateFin: '',
+  price: '',
   userId: '',
   fournisseurId: '',
+  document: null,
 };
 
 function toDateInputValue(value) {
@@ -40,8 +42,10 @@ function ContractBuilderForm({
       type: initialContract.type || 'renewable',
       dateDebut: toDateInputValue(initialContract.dateDebut),
       dateFin: toDateInputValue(initialContract.dateFin),
+      price: initialContract.price ?? '',
       userId: initialContract.userId?._id || initialContract.userId || '',
       fournisseurId: initialContract.fournisseurId?._id || initialContract.fournisseurId || '',
+      document: null,
     };
   }, [initialContract]);
 
@@ -52,21 +56,17 @@ function ContractBuilderForm({
   }, [initialValues]);
 
   function handleChange(event) {
-    const { name, value } = event.target;
+    const { name, value, type, files } = event.target;
 
     setFormData((current) => {
-      return { ...current, [name]: value };
+      return { ...current, [name]: type === 'file' ? files[0] : value };
     });
   }
 
   function handleSubmit(event) {
     event.preventDefault();
 
-    onSubmit({
-      ...formData,
-      dateDebut: formData.dateDebut || null,
-      dateFin: formData.dateFin || null,
-    });
+    onSubmit(formData);
 
     if (!initialContract) {
       setFormData(emptyForm);
@@ -75,8 +75,8 @@ function ContractBuilderForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex h-full flex-col gap-4">
-      <div className="grid gap-2">
-        <label className="grid gap-2">
+      <div className="grid gap-4 md:grid-cols-2">
+        <label className="grid min-w-0 gap-2">
           <span className="text-sm font-medium text-slate-700">Title</span>
           <input
             name="title"
@@ -84,7 +84,22 @@ function ContractBuilderForm({
             onChange={handleChange}
             required
             placeholder="Master services agreement"
-            className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition focus:border-slate-400 focus:bg-white"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm outline-none transition focus:border-slate-400 focus:bg-white"
+          />
+        </label>
+
+        <label className="grid min-w-0 gap-2">
+          <span className="text-sm font-medium text-slate-700">Price (€)</span>
+          <input
+            name="price"
+            type="number"
+            min="0"
+            step="0.01"
+            value={formData.price}
+            onChange={handleChange}
+            required
+            placeholder="0.00"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm outline-none transition focus:border-slate-400 focus:bg-white"
           />
         </label>
       </div>
@@ -132,6 +147,24 @@ function ContractBuilderForm({
           <span className="text-xs text-slate-500">
             End date is required for CDD contracts. CDI contracts do not require an end date.
           </span>
+        </label>
+      </div>
+
+      <div className="grid gap-4">
+        <label className="grid min-w-0 gap-2">
+          <span className="text-sm font-medium text-slate-700">Contract Document (PDF)</span>
+          <input
+            type="file"
+            name="document"
+            accept="application/pdf"
+            onChange={handleChange}
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm outline-none transition focus:border-slate-400 focus:bg-white file:mr-4 file:rounded-xl file:border-0 file:bg-slate-200 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-slate-700 hover:file:bg-slate-300"
+          />
+          {initialContract?.documentUrl && !formData.document && (
+            <span className="text-xs text-slate-500">
+              A document is already attached. Upload a new PDF to replace it.
+            </span>
+          )}
         </label>
       </div>
 

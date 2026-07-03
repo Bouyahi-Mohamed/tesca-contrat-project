@@ -24,7 +24,11 @@ function handleError(res, error) {
 
 async function createContract(req, res) {
   try {
-    const contract = await Contract.create(req.body);
+    const contractData = { ...req.body };
+    if (req.file) {
+      contractData.documentUrl = `/uploads/${req.file.filename}`;
+    }
+    const contract = await Contract.create(contractData);
     return res.status(201).json(contract);
   } catch (error) {
     return handleError(res, error);
@@ -52,7 +56,12 @@ async function updateContract(req, res) {
       return res.status(404).json({ message: 'Contract not found' });
     }
 
-    Object.assign(contract, req.body);
+    const updateData = { ...req.body };
+    if (req.file) {
+      updateData.documentUrl = `/uploads/${req.file.filename}`;
+    }
+
+    Object.assign(contract, updateData);
     const updated = await contract.save();
 
     return res.json(updated);

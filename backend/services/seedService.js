@@ -33,6 +33,7 @@ async function ensureSeedData() {
       status: 'active',
       dateDebut: new Date(),
       dateFin: new Date(new Date().setMonth(new Date().getMonth() + 1)),
+      price: 1500,
       userId: user._id,
       fournisseurId: fournisseur._id,
     });
@@ -43,6 +44,7 @@ async function ensureSeedData() {
       status: 'active',
       dateDebut: new Date(),
       dateFin: null,
+      price: 2500.50,
       userId: user._id,
       fournisseurId: fournisseur._id,
     });
