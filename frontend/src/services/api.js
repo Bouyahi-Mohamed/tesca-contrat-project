@@ -7,6 +7,19 @@ const api = axios.create({
   },
 });
 
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export async function login(email, password) {
+  const { data } = await api.post('/auth/login', { email, password });
+  return data;
+}
+
 export async function fetchContracts() {
   const { data } = await api.get('/contracts');
   return data;
@@ -24,6 +37,16 @@ export async function fetchFournisseurs() {
 
 export async function createFournisseur(payload) {
   const { data } = await api.post('/fournisseurs', payload);
+  return data;
+}
+
+export async function deleteFournisseur(id) {
+  const { data } = await api.delete(`/fournisseurs/${id}`);
+  return data;
+}
+
+export async function createUser(payload) {
+  const { data } = await api.post('/users', payload);
   return data;
 }
 

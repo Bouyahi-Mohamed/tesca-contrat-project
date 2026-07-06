@@ -12,14 +12,18 @@ import {
   continueContract,
   createContract,
   createFournisseur,
+  deleteFournisseur,
   deleteContract,
   fetchContracts,
   fetchFournisseurs,
   fetchUsers,
+  createUser,
   updateContract,
 } from '../services/api';
 
-function Dashboard({ onLogout }) {
+import UserForm from '../components/UserForm';
+
+function Dashboard({ user, onLogout }) {
   const [contracts, setContracts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -32,6 +36,9 @@ function Dashboard({ onLogout }) {
   const [showSupplierModal, setShowSupplierModal] = useState(false);
   const [supplierSubmitting, setSupplierSubmitting] = useState(false);
   const [supplierError, setSupplierError] = useState('');
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [userSubmitting, setUserSubmitting] = useState(false);
+  const [userError, setUserError] = useState('');
 
   const pendingContracts = useMemo(
     () => contracts.filter((contract) => contract.status === 'en_attente'),
@@ -131,6 +138,32 @@ function Dashboard({ onLogout }) {
     }
   }
 
+  async function handleDeleteSupplier(supplier) {
+    const confirmed = window.confirm(`Delete supplier "${supplier.name}"?`);
+    if (!confirmed) return;
+    setSupplierError('');
+    try {
+      await deleteFournisseur(supplier._id);
+      await loadReferences();
+    } catch (err) {
+      setSupplierError(err?.response?.data?.message || 'Failed to delete supplier');
+    }
+  }
+
+  async function handleCreateUser(formData) {
+    setUserSubmitting(true);
+    setUserError('');
+    try {
+      await createUser(formData);
+      await loadReferences();
+      setShowUserModal(false);
+    } catch (err) {
+      setUserError(err?.response?.data?.message || 'Failed to create user');
+    } finally {
+      setUserSubmitting(false);
+    }
+  }
+
   async function handleDelete(contract) {
     const confirmed = window.confirm(`Delete contract "${contract.title}"?`);
     if (!confirmed) {
@@ -187,11 +220,11 @@ function Dashboard({ onLogout }) {
       <div className="mt-12 -mb-12">
       <SiteHeader
         title="Our experts are ready to listen to you"
-        primaryActionLabel="Nous contacter"
-        primaryActionOnClick={() => {
+        primaryActionLabel={user?.role === 'admin' ? "Nous contacter" : null}
+        primaryActionOnClick={user?.role === 'admin' ? () => {
           setEditingContract(null);
           setShowContractModal(true);
-        }}
+        } : undefined}
         secondaryActionLabel="Déconnexion"
         secondaryActionOnClick={onLogout}
       />
@@ -231,23 +264,36 @@ function Dashboard({ onLogout }) {
               <h2 className="mt-2 font-display text-2xl font-bold text-slate-950">Contract list</h2>
             </div>
             <div className="flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  setEditingContract(null);
-                  setShowContractModal(true);
-                }}
-                className="rounded-2xl bg-amber-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
-              >
-                Add contract
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowSupplierModal(true)}
-                className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-              >
-                Add supplier
-              </button>
+              {(user?.role === 'admin' || user?.role === 'achat') && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingContract(null);
+                    setShowContractModal(true);
+                  }}
+                  className="rounded-2xl bg-amber-400 px-4 py-3 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
+                >
+                  Add contract
+                </button>
+              )}
+              {user?.role === 'admin' && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setShowSupplierModal(true)}
+                    className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                  >
+                    Manage suppliers
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowUserModal(true)}
+                    className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+                  >
+                    Add user
+                  </button>
+                </>
+              )}
               <button
                 type="button"
                 onClick={() => loadContracts({ runCheck: true })}
@@ -264,7 +310,7 @@ function Dashboard({ onLogout }) {
                 Loading contracts...
               </div>
             ) : (
-              <ContractList contracts={contracts} onEdit={handleEditContract} onDelete={handleDelete} />
+              <ContractList contracts={contracts} user={user} onEdit={handleEditContract} onDelete={handleDelete} />
             )}
           </div>
         </section>
@@ -287,16 +333,33 @@ function Dashboard({ onLogout }) {
         ) : null}
 
         {showSupplierModal ? (
-          <Modal title="Add supplier" onClose={() => setShowSupplierModal(false)} widthClass="max-w-xl">
+          <Modal title="Manage suppliers" onClose={() => setShowSupplierModal(false)} widthClass="max-w-xl">
             {supplierError ? (
               <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-800">
                 {supplierError}
               </div>
             ) : null}
             <SupplierForm
+              fournisseurs={fournisseurs}
               onSubmit={handleCreateSupplier}
+              onDelete={handleDeleteSupplier}
               onCancel={() => setShowSupplierModal(false)}
               isSubmitting={supplierSubmitting}
+            />
+          </Modal>
+        ) : null}
+
+        {showUserModal ? (
+          <Modal title="Create new user account" onClose={() => setShowUserModal(false)} widthClass="max-w-xl">
+            {userError ? (
+              <div className="mb-4 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-800">
+                {userError}
+              </div>
+            ) : null}
+            <UserForm
+              onSubmit={handleCreateUser}
+              onCancel={() => setShowUserModal(false)}
+              isSubmitting={userSubmitting}
             />
           </Modal>
         ) : null}

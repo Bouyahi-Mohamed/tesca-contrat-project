@@ -9,15 +9,16 @@ const {
   updateContract,
 } = require('../controllers/contractController');
 const upload = require('../middleware/upload');
+const { requireAuth, requireRole } = require('../middleware/auth');
 
 const router = express.Router();
 
-router.post('/', upload.single('document'), createContract);
-router.get('/', getContracts);
-router.put('/:id', upload.single('document'), updateContract);
-router.delete('/:id', deleteContract);
-router.post('/check-renewals', runRenewalCheck);
-router.put('/:id/continue', continueContractAction);
-router.put('/:id/cancel', cancelContractAction);
+router.get('/', requireAuth, getContracts);
+router.post('/', requireAuth, requireRole(['admin', 'achat']), upload.single('document'), createContract);
+router.put('/:id', requireAuth, requireRole(['admin', 'achat']), upload.single('document'), updateContract);
+router.delete('/:id', requireAuth, requireRole(['admin']), deleteContract);
+router.post('/check-renewals', requireAuth, runRenewalCheck);
+router.put('/:id/continue', requireAuth, requireRole(['admin', 'achat']), continueContractAction);
+router.put('/:id/cancel', requireAuth, requireRole(['admin', 'achat']), cancelContractAction);
 
 module.exports = router;

@@ -60,7 +60,17 @@ project tesca/
 - Renewal scanner that marks near-expiry `CDD renewable` contracts as `en_attente`
 - `CDD` contracts end automatically when `dateFin` passes
 - `CDI` contracts do not require an end date
-- Seeded demo `user`, `fournisseur`, and `contract` documents are created automatically on first backend start if the collections are empty
+- JWT-based authentication and Role-Based Access Control (RBAC) with `admin`, `achat`, and `other` roles
+- PDF Viewing for all roles
+- Seeded demo users, suppliers, and contracts are created automatically on first backend start
+
+## Authentication & RBAC
+
+The application enforces role-based access. On backend startup, 3 default users are created with the password `Tesca2026!`:
+
+1. **Admin** (`tarek.ferchichi@tescagroup.com`): Full access to manage contracts, users, and suppliers.
+2. **Achat** (`safa@tescagroup.com`): Can view, create, and edit contracts. Cannot delete contracts, manage users, or delete suppliers.
+3. **Other** (`bouyahi.mohamed@testgoup.com`): Read-only access. Can view contracts and PDFs.
 
 ## Backend Setup
 
@@ -120,6 +130,7 @@ Open the frontend in your browser at `http://localhost:5173/`.
 
 ## API Summary
 
+- `POST /api/auth/login`
 - `POST /api/contracts`
 - `GET /api/contracts`
 - `PUT /api/contracts/:id`
@@ -128,7 +139,10 @@ Open the frontend in your browser at `http://localhost:5173/`.
 - `PUT /api/contracts/:id/continue`
 - `PUT /api/contracts/:id/cancel`
 - `GET /api/users`
+- `POST /api/users`
 - `GET /api/fournisseurs`
+- `POST /api/fournisseurs`
+- `DELETE /api/fournisseurs/:id`
 
 ## Notes
 

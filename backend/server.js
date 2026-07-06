@@ -8,6 +8,7 @@ const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const contractRoutes = require('./routes/contractRoutes');
 const referenceRoutes = require('./routes/referenceRoutes');
+const authRoutes = require('./routes/authRoutes');
 const { ALERT_WINDOW_DAYS } = require('./services/contractLifecycle');
 const { startRenewalMonitor } = require('./services/renewalService');
 const { ensureSeedData } = require('./services/seedService');
@@ -42,6 +43,7 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+app.use('/api/auth', authRoutes);
 app.use('/api/contracts', contractRoutes);
 app.use('/api', referenceRoutes);
 

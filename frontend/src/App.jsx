@@ -1,24 +1,47 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import NotFound from './pages/notFound';
 
 function App() {
-  // Simple fake auth state for frontend-only implementation
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    localStorage.getItem('isAuthenticated') === 'true'
-  );
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  function handleLogin() {
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        // Check if token is expired
+        if (decoded.exp * 1000 > Date.now()) {
+          setIsAuthenticated(true);
+          setUser(decoded);
+        } else {
+          handleLogout();
+        }
+      } catch (e) {
+        handleLogout();
+      }
+    }
+    setLoading(false);
+  }, []);
+
+  function handleLogin(token, userData) {
+    localStorage.setItem('token', token);
     setIsAuthenticated(true);
-    localStorage.setItem('isAuthenticated', 'true');
+    setUser(userData);
   }
 
   function handleLogout() {
+    localStorage.removeItem('token');
     setIsAuthenticated(false);
-    localStorage.removeItem('isAuthenticated');
+    setUser(null);
   }
+
+  if (loading) return null;
 
   return (
     <Router>
@@ -29,7 +52,7 @@ function App() {
         />
         <Route 
           path="/" 
-          element={isAuthenticated ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/login" replace />} 
+          element={isAuthenticated ? <Dashboard user={user} onLogout={handleLogout} /> : <Navigate to="/login" replace />} 
         />
         <Route path="*" element={<NotFound />} />
       </Routes>

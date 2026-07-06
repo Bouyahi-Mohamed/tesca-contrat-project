@@ -5,7 +5,7 @@ const emptyForm = {
   contactEmail: '',
 };
 
-function SupplierForm({ initialSupplier, onSubmit, onCancel, isSubmitting }) {
+function SupplierForm({ fournisseurs = [], initialSupplier, onSubmit, onDelete, onCancel, isSubmitting }) {
   const [formData, setFormData] = useState(initialSupplier || emptyForm);
 
   function handleChange(event) {
@@ -22,7 +22,31 @@ function SupplierForm({ initialSupplier, onSubmit, onCancel, isSubmitting }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="grid gap-4">
+    <div className="flex flex-col gap-8">
+      {fournisseurs.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-slate-700 border-b border-slate-200 pb-2 mb-3">Existing suppliers</h3>
+          <ul className="flex flex-col gap-2 max-h-48 overflow-y-auto pr-2">
+            {fournisseurs.map(f => (
+              <li key={f._id} className="flex items-center justify-between p-3 rounded-xl border border-slate-200 bg-white">
+                <div className="flex flex-col">
+                  <span className="font-semibold text-sm">{f.name}</span>
+                  <span className="text-xs text-slate-500">{f.contactEmail}</span>
+                </div>
+                {onDelete && (
+                  <button type="button" onClick={() => onDelete(f)} className="text-rose-600 hover:bg-rose-50 p-2 rounded-lg text-xs font-semibold transition">
+                    Delete
+                  </button>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <div>
+        <h3 className="text-sm font-semibold text-slate-700 border-b border-slate-200 pb-2 mb-4">Add new supplier</h3>
+        <form onSubmit={handleSubmit} className="grid gap-4">
       <label className="grid gap-2">
         <span className="text-sm font-medium text-slate-700">Supplier name</span>
         <input
@@ -65,6 +89,8 @@ function SupplierForm({ initialSupplier, onSubmit, onCancel, isSubmitting }) {
         </button>
       </div>
     </form>
+    </div>
+  </div>
   );
 }
 

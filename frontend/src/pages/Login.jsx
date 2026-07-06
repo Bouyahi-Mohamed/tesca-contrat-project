@@ -2,17 +2,25 @@ import { useState } from 'react';
 import SiteHeader from '../components/SiteHeader';
 import SiteFooter from '../components/SiteFooter';
 import { useNavigate } from 'react-router-dom';
+import { login } from '../services/api';
 
 function Login({ onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    if (email && password) {
-      onLogin();
-      navigate('/');
+    setError('');
+    try {
+      if (email && password) {
+        const data = await login(email, password);
+        onLogin(data.token, data.user);
+        navigate('/');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
     }
   }
 
@@ -32,8 +40,12 @@ function Login({ onLogin }) {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-6
-          ">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            {error && (
+              <div className="rounded-xl bg-red-50 p-3 text-sm text-red-600 border border-red-200">
+                {error}
+              </div>
+            )}
             <label className="flex flex-col gap-2">
               <span className="text-sm font-semibold text-slate-700">Adresse Email</span>
               <input 

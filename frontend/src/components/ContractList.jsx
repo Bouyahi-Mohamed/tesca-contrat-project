@@ -66,7 +66,7 @@ function statusStyles(status) {
 
 const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api$/, '');
 
-function ContractList({ contracts, onEdit, onDelete }) {
+function ContractList({ contracts, user, onEdit, onDelete }) {
   const [viewingPdfContract, setViewingPdfContract] = useState(null);
 
   return (
@@ -122,7 +122,7 @@ function ContractList({ contracts, onEdit, onDelete }) {
                     <td className="px-4 py-4 text-sm text-slate-700">{formatDate(contract.dateFin)}</td>
                     <td className="px-4 py-4 text-sm text-slate-700 font-medium">{formatPrice(contract.price)}</td>
                     <td className="px-4 py-4">
-                      <div className="flex flex gap-1">
+                      <div className="flex flex-wrap gap-1">
                         {contract.documentUrl && (
                           <button
                             type="button"
@@ -132,20 +132,24 @@ function ContractList({ contracts, onEdit, onDelete }) {
                             View
                           </button>
                         )}
-                        <button
-                          type="button"
-                          onClick={() => onEdit(contract)}
-                          className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
-                        >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onDelete(contract)}
-                          className="rounded-xl border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-700 transition hover:bg-rose-50"
-                        >
-                          Delete
-                        </button>
+                        {(user?.role === 'admin' || user?.role === 'achat') && (
+                          <button
+                            type="button"
+                            onClick={() => onEdit(contract)}
+                            className="rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100"
+                          >
+                            Edit
+                          </button>
+                        )}
+                        {user?.role === 'admin' && (
+                          <button
+                            type="button"
+                            onClick={() => onDelete(contract)}
+                            className="rounded-xl border border-rose-200 px-3 py-2 text-xs font-semibold text-rose-700 transition hover:bg-rose-50"
+                          >
+                            Delete
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -160,10 +164,10 @@ function ContractList({ contracts, onEdit, onDelete }) {
         <PdfViewerModal
           pdfUrl={`${API_BASE}${viewingPdfContract.documentUrl}`}
           onClose={() => setViewingPdfContract(null)}
-          onReupload={() => {
+          onReupload={(user?.role === 'admin' || user?.role === 'achat') ? () => {
             onEdit(viewingPdfContract);
             setViewingPdfContract(null);
-          }}
+          } : null}
         />
       )}
     </section>
