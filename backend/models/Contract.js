@@ -26,12 +26,12 @@ const contractSchema = new mongoose.Schema(
     },
     dateFin: {
       type: Date,
-      required: [true, 'End date is required'],
     },
     price: {
       type: Number,
       required: [true, 'Price is required'],
       min: [0, 'Price must be a positive number'],
+      default: 0,
     },
     documentUrl: {
       type: String,

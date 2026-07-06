@@ -39,7 +39,7 @@ function SiteHeader({
       </header>
 
       {/* Hero Section */}
-      <section className="bg-[#F6F4F0] px-6 py-24 sm:py-32 lg:px-8 text-center flex flex-col items-center justify-center border-b border-[#181818]/5">
+      <section className="bg-[#F6F4F0] px-6 py-24 sm:py-32 lg:px-8 text-center flex flex-col items-center justify-center  border-[#181818]/5">
         <h1 className="text-4xl sm:text-5xl lg:text-[2.75rem] font-bold text-[#181818] max-w-4xl leading-[1.2]">
           {title}
         </h1>
