@@ -220,12 +220,12 @@ function Dashboard({ user, onLogout }) {
       <div className="mt-12 -mb-12">
       <SiteHeader
         title="Our experts are ready to listen to you"
-        primaryActionLabel={user?.role === 'admin' ? "Nous contacter" : null}
+        primaryActionLabel={user?.role === 'admin' ? "Contact us" : null}
         primaryActionOnClick={user?.role === 'admin' ? () => {
           setEditingContract(null);
           setShowContractModal(true);
         } : undefined}
-        secondaryActionLabel="Déconnexion"
+        secondaryActionLabel="Logout"
         secondaryActionOnClick={onLogout}
       />
       </div>

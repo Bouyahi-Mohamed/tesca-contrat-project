@@ -122,7 +122,7 @@ function ContractList({ contracts, user, onEdit, onDelete }) {
                     <td className="px-4 py-4 text-sm text-slate-700">{formatDate(contract.dateFin)}</td>
                     <td className="px-4 py-4 text-sm text-slate-700 font-medium">{formatPrice(contract.price)}</td>
                     <td className="px-4 py-4">
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex  gap-1">
                         {contract.documentUrl && (
                           <button
                             type="button"

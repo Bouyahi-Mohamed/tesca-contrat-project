@@ -28,15 +28,15 @@ function Login({ onLogin }) {
     <div className="min-h-screen bg-[#F6F4F0] text-slate-900 flex flex-col">
       <div className="-mb-12">
         <SiteHeader 
-          title="Connexion à l'espace de gestion des contrats" 
+          title="Login to the contract management area" 
         />
       </div>
       <main className="flex-grow flex items-center justify-center p-6 -mt-12">
         <div className="w-full max-w-md bg-white rounded-[2rem] p-8 shadow-glow border border-slate-200">
           <div className="mb-8 text-center">
-            <h2 className="text-2xl font-bold font-display text-slate-950">Se connecter</h2>
+            <h2 className="text-2xl font-bold font-display text-slate-950">Login</h2>
             <p className="mt-2 text-sm text-slate-500">
-              Veuillez saisir vos identifiants pour accéder à l'espace de gestion.
+              Please enter your credentials to access the management area.
             </p>
           </div>
 
@@ -47,7 +47,7 @@ function Login({ onLogin }) {
               </div>
             )}
             <label className="flex flex-col gap-2">
-              <span className="text-sm font-semibold text-slate-700">Adresse Email</span>
+              <span className="text-sm font-semibold text-slate-700">Email Address</span>
               <input 
                 type="email" 
                 value={email}
@@ -59,7 +59,7 @@ function Login({ onLogin }) {
             </label>
 
             <label className="flex flex-col gap-2">
-              <span className="text-sm font-semibold text-slate-700">Mot de passe</span>
+              <span className="text-sm font-semibold text-slate-700">Password</span>
               <input 
                 type="password" 
                 value={password}
@@ -74,11 +74,11 @@ function Login({ onLogin }) {
               type="submit" 
               className="mt-2 w-full rounded-2xl bg-[#181818] px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
             >
-              Se connecter
+              login
             </button>
             
             <p className="text-xs text-center text-slate-500 mt-2">
-              Seul le directeur des achats peut créer un compte.
+              Don't have an account? Please contact the administrator.
             </p>
           </form>
         </div>
