@@ -105,7 +105,7 @@ function Dashboard({ user, onLogout }) {
       payload.append('price', formData.price);
       if (formData.dateDebut) payload.append('dateDebut', formData.dateDebut);
       if (formData.type !== 'cdi' && formData.dateFin) payload.append('dateFin', formData.dateFin);
-      payload.append('userId', formData.userId);
+      payload.append('userId', user.id || user._id);
       payload.append('fournisseurId', formData.fournisseurId);
       if (formData.document) {
         payload.append('document', formData.document);

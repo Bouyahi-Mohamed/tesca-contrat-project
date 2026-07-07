@@ -6,7 +6,6 @@ const emptyForm = {
   dateDebut: '',
   dateFin: '',
   price: '',
-  userId: '',
   fournisseurId: '',
   document: null,
 };
@@ -43,7 +42,6 @@ function ContractBuilderForm({
       dateDebut: toDateInputValue(initialContract.dateDebut),
       dateFin: toDateInputValue(initialContract.dateFin),
       price: initialContract.price ?? '',
-      userId: initialContract.userId?._id || initialContract.userId || '',
       fournisseurId: initialContract.fournisseurId?._id || initialContract.fournisseurId || '',
       document: null,
     };
@@ -168,24 +166,7 @@ function ContractBuilderForm({
         </label>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <label className="grid min-w-0 gap-2">
-          <span className="text-sm font-medium text-slate-700">user</span>
-          <select
-            name="userId"
-            value={formData.userId}
-            onChange={handleChange}
-            required
-            className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm outline-none transition focus:border-slate-400 focus:bg-white"
-          >
-            <option value="">Select a user</option>
-            {users.map((user) => (
-              <option key={user._id} value={user._id}>
-                {user.name}
-              </option>
-            ))}
-          </select>
-        </label>
+      <div className="grid gap-4 md:grid-cols-1">
 
         <label className="grid min-w-0 gap-2">
           <span className="text-sm font-medium text-slate-700">supplier</span>
