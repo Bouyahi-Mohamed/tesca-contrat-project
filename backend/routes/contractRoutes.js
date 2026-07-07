@@ -7,6 +7,9 @@ const {
   getContracts,
   runRenewalCheck,
   updateContract,
+  validateContractAction,
+  rejectContractAction,
+  getNotificationsAction,
 } = require('../controllers/contractController');
 const upload = require('../middleware/upload');
 const { requireAuth, requireRole } = require('../middleware/auth');
@@ -20,5 +23,9 @@ router.delete('/:id', requireAuth, requireRole(['admin']), deleteContract);
 router.post('/check-renewals', requireAuth, runRenewalCheck);
 router.put('/:id/continue', requireAuth, requireRole(['admin', 'achat']), continueContractAction);
 router.put('/:id/cancel', requireAuth, requireRole(['admin', 'achat']), cancelContractAction);
+
+router.get('/notifications', requireAuth, requireRole(['admin']), getNotificationsAction);
+router.put('/:id/validate', requireAuth, requireRole(['admin']), validateContractAction);
+router.put('/:id/reject', requireAuth, requireRole(['admin']), rejectContractAction);
 
 module.exports = router;

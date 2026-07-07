@@ -19,12 +19,16 @@ import {
   fetchUsers,
   createUser,
   updateContract,
+  fetchNotifications,
+  validateContract,
+  rejectContract,
 } from '../services/api';
 
 import UserForm from '../components/UserForm';
 
 function Dashboard({ user, onLogout }) {
   const [contracts, setContracts] = useState([]);
+  const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [renewalAction, setRenewalAction] = useState('');
@@ -47,10 +51,10 @@ function Dashboard({ user, onLogout }) {
 
   const dashboardStats = useMemo(
     () => ({
-      total: contracts.length,
-      active: contracts.filter((contract) => contract.status === 'active').length,
-      pending: pendingContracts.length,
-      terminated: contracts.filter((contract) => contract.status === 'terminer').length,
+      total: contracts.filter((contract) => contract.verificationStatus === 'verified').length,
+      active: contracts.filter((contract) => contract.status === 'active' && contract.verificationStatus === 'verified').length,
+      pending: pendingContracts.filter((contract) => contract.verificationStatus === 'verified').length,
+      terminated: contracts.filter((contract) => contract.status === 'terminer' && contract.verificationStatus === 'verified').length,
     }),
     [contracts, pendingContracts.length]
   );
@@ -66,6 +70,11 @@ function Dashboard({ user, onLogout }) {
 
       const data = await fetchContracts();
       setContracts(data);
+      
+      if (user?.role === 'admin') {
+        const notifs = await fetchNotifications();
+        setNotifications(notifs);
+      }
     } catch (fetchError) {
       setError(fetchError?.response?.data?.message || 'Failed to load contracts');
     } finally {
@@ -213,6 +222,24 @@ function Dashboard({ user, onLogout }) {
     }
   }
 
+  async function handleValidate(contract) {
+    try {
+      await validateContract(contract._id);
+      await loadContracts();
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Failed to validate contract');
+    }
+  }
+
+  async function handleReject(contract) {
+    try {
+      await rejectContract(contract._id);
+      await loadContracts();
+    } catch (err) {
+      setError(err?.response?.data?.message || 'Failed to reject contract');
+    }
+  }
+
   const alertContract = pendingContracts[0] || null;
 
   return (
@@ -256,6 +283,38 @@ function Dashboard({ user, onLogout }) {
         </section>
 
         <AlertBanner contract={alertContract} onContinue={handleContinue} onCancel={handleCancel} busyAction={renewalAction} />
+
+        {user?.role === 'admin' && notifications.length > 0 && (
+          <section id="validation-queue" className="rounded-3xl border border-amber-200 bg-amber-50 p-6 shadow-glow">
+            <h2 className="mb-4 font-display text-xl font-bold text-amber-900">Contracts awaiting validation</h2>
+            <div className="flex flex-col gap-4">
+              {notifications.map((notif) => (
+                <div key={notif._id} className="flex items-center justify-between rounded-xl bg-white p-4 shadow-sm border border-amber-100">
+                  <div>
+                    <span className="font-semibold text-amber-900">{notif.message}</span>
+                    {notif.contractId && (
+                      <span className="ml-2 text-sm text-slate-600">- {notif.contractId.title}</span>
+                    )}
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleValidate(notif.contractId)}
+                      className="rounded-lg bg-green-500 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-green-600"
+                    >
+                      Validate
+                    </button>
+                    <button
+                      onClick={() => handleReject(notif.contractId)}
+                      className="rounded-lg bg-red-500 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-red-600"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section id="registry" className="rounded-3xl border border-slate-200 bg-white p-6 shadow-glow">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">

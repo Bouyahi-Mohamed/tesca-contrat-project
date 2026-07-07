@@ -20,6 +20,23 @@ const contractSchema = new mongoose.Schema(
       enum: ['active', 'en_attente', 'terminer'],
       default: 'active',
     },
+    verificationStatus: {
+      type: String,
+      enum: ['pending_validation', 'verified', 'unverified'],
+      default: 'verified', // Defaults to verified for backward compatibility, will be explicitly set for agents
+    },
+    adminApprovalDate: {
+      type: Date,
+    },
+    adminWhoValidated: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    validationHistory: [{
+      status: String,
+      admin: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+      date: { type: Date, default: Date.now },
+    }],
     dateDebut: {
       type: Date,
       required: [true, 'Start date is required'],

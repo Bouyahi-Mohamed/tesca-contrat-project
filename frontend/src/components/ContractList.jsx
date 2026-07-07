@@ -64,6 +64,19 @@ function statusStyles(status) {
   }
 }
 
+function verificationStyles(status) {
+  switch (status) {
+    case 'verified':
+      return 'bg-blue-100 text-blue-800 ring-1 ring-blue-200';
+    case 'unverified':
+      return 'bg-red-100 text-red-800 ring-1 ring-red-200';
+    case 'pending_validation':
+      return 'bg-purple-100 text-purple-800 ring-1 ring-purple-200';
+    default:
+      return 'bg-slate-100 text-slate-700';
+  }
+}
+
 const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api$/, '');
 
 function ContractList({ contracts, user, onEdit, onDelete }) {
@@ -112,11 +125,18 @@ function ContractList({ contracts, user, onEdit, onDelete }) {
                     </td>
                     <td className="px-4 py-4 text-sm text-slate-700">{formatContractType(contract.type)}</td>
                     <td className="px-4 py-4">
-                      <span
-                        className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${statusStyles(contract.status)}`}
-                      >
-                        {contract.status}
-                      </span>
+                      <div className="flex flex-col gap-2 items-start">
+                        <span
+                          className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${statusStyles(contract.status)}`}
+                        >
+                          {contract.status}
+                        </span>
+                        <span
+                          className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] ${verificationStyles(contract.verificationStatus)}`}
+                        >
+                          {contract.verificationStatus === 'pending_validation' ? 'pending' : contract.verificationStatus}
+                        </span>
+                      </div>
                     </td>
                     <td className="px-4 py-4 text-sm text-slate-700">{formatDate(contract.dateDebut)}</td>
                     <td className="px-4 py-4 text-sm text-slate-700">{formatDate(contract.dateFin)}</td>

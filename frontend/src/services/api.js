@@ -81,3 +81,18 @@ export async function cancelContract(id) {
   const { data } = await api.put(`/contracts/${id}/cancel`);
   return data;
 }
+
+export async function fetchNotifications() {
+  const { data } = await api.get('/contracts/notifications');
+  return data;
+}
+
+export async function validateContract(id) {
+  const { data } = await api.put(`/contracts/${id}/validate`);
+  return data;
+}
+
+export async function rejectContract(id) {
+  const { data } = await api.put(`/contracts/${id}/reject`);
+  return data;
+}
