@@ -1,3 +1,4 @@
+import logo from "../../dist/assets/images/tesca-short-logo.svg";
 function SiteHeader({
   title,
   description,
@@ -12,7 +13,7 @@ function SiteHeader({
       <header className="bg-[#181818] text-white w-full px-6 sm:px-10 py-5 flex items-center justify-between fixed top-0 left-0 z-50">
         {/* Logo */}
         <div className="flex items-center w-1/3  ">
-          <img src="https://www.tescagroup.com/wp-content/themes/tesca/assets/images/svg/tesca-short-logo.svg" alt="Tesca Group logo" />
+          <img src={logo} alt="Tesca Group logo" />
         </div>
 
         {/* Hamburger */}

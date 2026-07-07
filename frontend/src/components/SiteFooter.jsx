@@ -1,3 +1,5 @@
+
+import logo from "../../dist/assets/images/tesca-short-logo.svg";
 function SiteFooter() {
   return (
     <footer id="footer" role="contentinfo" className="bg-[#181818] text-white w-full px-6 py-12 sm:px-10 lg:px-12 mt-12 border-t border-[#181818]/10">
@@ -6,7 +8,7 @@ function SiteFooter() {
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-10">
           <div className="flex items-center" itemScope itemType="http://schema.org/logo">
             <a itemProp="url" href="https://www.tescagroup.com/" aria-label="Tesca Group home">
-              <img src="https://www.tescagroup.com/wp-content/themes/tesca/assets/images/svg/tesca-short-logo.svg" alt="Tesca Group logo" />
+              <img src={logo} alt="Tesca Group logo" />
             </a>
           </div>
 
