@@ -60,7 +60,9 @@ async function cancelContract(contractId) {
     return null;
   }
 
-  contract.status = 'terminer';
+  // User chose not to renew, so it becomes a standard non-renewable CDD.
+  contract.type = 'active_to_terminer';
+  contract.status = getLifecycleStatus(contract);
   await contract.save();
 
   return contract.toObject();

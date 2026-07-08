@@ -282,7 +282,9 @@ function Dashboard({ user, onLogout }) {
           ))}
         </section>
 
-        <AlertBanner contracts={pendingContracts} onContinue={handleContinue} onCancel={handleCancel} busyAction={renewalAction} />
+        {(user?.role === 'admin' || user?.role === 'achat') && (
+          <AlertBanner contracts={pendingContracts} onContinue={handleContinue} onCancel={handleCancel} busyAction={renewalAction} />
+        )}
 
         {user?.role === 'admin' && notifications.length > 0 && (
           <section id="validation-queue" className="rounded-3xl border border-amber-200 bg-amber-50 p-6 shadow-glow">
@@ -298,14 +300,16 @@ function Dashboard({ user, onLogout }) {
                   </div>
                   <div className="flex gap-2">
                     <button
-                      onClick={() => handleValidate(notif.contractId)}
-                      className="rounded-lg bg-green-500 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-green-600"
+                      onClick={() => notif.contractId && handleValidate(notif.contractId)}
+                      disabled={!notif.contractId}
+                      className="rounded-lg bg-green-500 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-green-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Validate
                     </button>
                     <button
-                      onClick={() => handleReject(notif.contractId)}
-                      className="rounded-lg bg-red-500 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-red-600"
+                      onClick={() => notif.contractId && handleReject(notif.contractId)}
+                      disabled={!notif.contractId}
+                      className="rounded-lg bg-red-500 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Reject
                     </button>
@@ -315,6 +319,7 @@ function Dashboard({ user, onLogout }) {
             </div>
           </section>
         )}
+
 
         <section id="registry" className="rounded-3xl border border-slate-200 bg-white p-6 shadow-glow">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">

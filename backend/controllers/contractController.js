@@ -106,6 +106,9 @@ async function deleteContract(req, res) {
       return res.status(404).json({ message: 'Contract not found' });
     }
 
+    // Remove any notifications linked to this contract so they don't linger
+    await Notification.deleteMany({ contractId: req.params.id });
+
     return res.json({ message: 'Contract deleted successfully' });
   } catch (error) {
     return handleError(res, error);
@@ -205,10 +208,14 @@ async function rejectContractAction(req, res) {
 
 async function getNotificationsAction(req, res) {
   try {
-    const notifications = await Notification.find({ read: false, forRole: req.user.role })
+    const notifications = await Notification.find({ read: false })
       .populate('contractId')
       .sort({ createdAt: -1 });
-    return res.json(notifications);
+
+    // Filter out orphaned notifications whose contract was deleted
+    const valid = notifications.filter((n) => n.contractId != null);
+
+    return res.json(valid);
   } catch (error) {
     return handleError(res, error);
   }
