@@ -1,42 +1,38 @@
-function AlertBanner({ contract, onContinue, onCancel, busyAction }) {
-  if (!contract) {
+function AlertBanner({ contracts, onContinue, onCancel, busyAction }) {
+  if (!contracts || contracts.length === 0) {
     return null;
   }
 
   return (
-    <section className="rounded-3xl border border-amber-200 bg-amber-50/90 p-5 shadow-glow backdrop-blur-sm">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.35em] text-amber-700">
-            Contract Expiring
-          </p>
-          <h2 className="mt-2 font-display text-2xl font-bold text-slate-950 md:text-3xl">
-            Contract Expiring: Do you want to continue?
-          </h2>
-          <p className="mt-2 max-w-2xl text-sm text-slate-700">
-            <span className="font-semibold text-slate-900">{contract.title}</span> is marked as{' '}
-            <span className="font-semibold">en_attente</span> and needs a renewal decision.
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <button
-            type="button"
-            onClick={() => onContinue(contract)}
-            disabled={busyAction === 'continue'}
-            className="inline-flex items-center justify-center rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {busyAction === 'continue' ? 'Continuing...' : 'Yes, Continue'}
-          </button>
-          <button
-            type="button"
-            onClick={() => onCancel(contract)}
-            disabled={busyAction === 'cancel'}
-            className="inline-flex items-center justify-center rounded-2xl border border-amber-300 bg-white px-5 py-3 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {busyAction === 'cancel' ? 'Cancelling...' : 'No, Cancel'}
-          </button>
-        </div>
+    <section className="rounded-3xl border border-amber-200 bg-amber-50 p-6 shadow-glow">
+      <h2 className="mb-4 font-display text-xl font-bold text-amber-900">Contract Expiring Alerts</h2>
+      <div className="flex flex-col gap-4">
+        {contracts.map((contract) => (
+          <div key={contract._id} className="flex flex-col md:flex-row md:items-center justify-between rounded-xl bg-white p-4 shadow-sm border border-amber-100 gap-4">
+            <div>
+              <span className="font-semibold text-amber-900">Contract Expiring: Do you want to continue?</span>
+              <span className="ml-2 text-sm text-slate-600">- <span className="font-semibold">{contract.title}</span> is marked as en_attente.</span>
+            </div>
+            <div className="flex gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => onContinue(contract)}
+                disabled={busyAction === `continue-${contract._id}`}
+                className="rounded-lg bg-slate-950 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {busyAction === `continue-${contract._id}` ? 'Continuing...' : 'Yes, Continue'}
+              </button>
+              <button
+                type="button"
+                onClick={() => onCancel(contract)}
+                disabled={busyAction === `cancel-${contract._id}`}
+                className="rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {busyAction === `cancel-${contract._id}` ? 'Cancelling...' : 'No, Cancel'}
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
     </section>
   );

@@ -105,7 +105,7 @@ function Dashboard({ user, onLogout }) {
       payload.append('price', formData.price);
       if (formData.dateDebut) payload.append('dateDebut', formData.dateDebut);
       if (formData.type !== 'cdi' && formData.dateFin) payload.append('dateFin', formData.dateFin);
-      payload.append('userId', user.id || user._id);
+      payload.append('userId', user.id || user._id || user.userId);
       payload.append('fournisseurId', formData.fournisseurId);
       if (formData.document) {
         payload.append('document', formData.document);
@@ -195,7 +195,7 @@ function Dashboard({ user, onLogout }) {
   }
 
   async function handleContinue(contract) {
-    setRenewalAction('continue');
+    setRenewalAction(`continue-${contract._id}`);
     setError('');
 
     try {
@@ -209,7 +209,7 @@ function Dashboard({ user, onLogout }) {
   }
 
   async function handleCancel(contract) {
-    setRenewalAction('cancel');
+    setRenewalAction(`cancel-${contract._id}`);
     setError('');
 
     try {
@@ -240,7 +240,7 @@ function Dashboard({ user, onLogout }) {
     }
   }
 
-  const alertContract = pendingContracts[0] || null;
+  // alertContract is no longer used, passing pendingContracts directly
 
   return (
     <div id="top" className="min-h-screen bg-[#F6F4F0] text-slate-900 flex flex-col ">
@@ -282,7 +282,7 @@ function Dashboard({ user, onLogout }) {
           ))}
         </section>
 
-        <AlertBanner contract={alertContract} onContinue={handleContinue} onCancel={handleCancel} busyAction={renewalAction} />
+        <AlertBanner contracts={pendingContracts} onContinue={handleContinue} onCancel={handleCancel} busyAction={renewalAction} />
 
         {user?.role === 'admin' && notifications.length > 0 && (
           <section id="validation-queue" className="rounded-3xl border border-amber-200 bg-amber-50 p-6 shadow-glow">
