@@ -13,5 +13,5 @@ yarn-error.log*
 # MongoDB data
 database/mongo-data/
 #contrat 
-backend\uploads
+backend/uploads/
 
