@@ -2,6 +2,8 @@
 
 A MERN stack contract management system with CRUD support, lifecycle management, an admin approval workflow, and a renewal alert flow for contracts approaching their end date.
 
+> **New to this project?** See [REQUIREMENTS.md](./REQUIREMENTS.md) for a full list of prerequisites, or run the install script below for a guided setup.
+
 ## Project Structure
 
 ```text
@@ -107,17 +109,44 @@ On backend startup, 3 default accounts are created with password `Tesca2026!`:
 2. **Achat** — `safa@tescagroup.com`
 3. **Other** (read-only) — `bouyahi.mohamed@testgoup.com`
 
-## Backend Setup
+## Quick Setup (Recommended)
+
+After cloning the repository, run the appropriate installer from the **project root**:
+
+```powershell
+# Windows
+.\install.bat
+```
+
+```bash
+# Mac / Linux
+bash install.sh
+```
+
+The script will install all dependencies and create `.env` files from the examples automatically.
+
+---
+
+## Manual Setup
+
+### Backend Setup
 
 If MongoDB is not already running on your machine, start it first:
 
 ```powershell
-mongod --dbpath "d:\code\github project\project tesca\database\mongo-data" --bind_ip 127.0.0.1 --port 27017
+# Windows — adjust the path to where you cloned the project
+mongod --dbpath "<project-root>\database\mongo-data" --bind_ip 127.0.0.1 --port 27017
+```
+
+```bash
+# Mac / Linux
+mongod --dbpath "<project-root>/database/mongo-data" --bind_ip 127.0.0.1 --port 27017
 ```
 
 ```bash
 cd backend
-copy .env.example .env
+copy .env.example .env   # Windows
+# cp .env.example .env   # Mac/Linux
 npm install
 npm run dev
 ```

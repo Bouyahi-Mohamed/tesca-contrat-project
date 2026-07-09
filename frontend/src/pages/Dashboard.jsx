@@ -302,14 +302,14 @@ function Dashboard({ user, onLogout }) {
                     <button
                       onClick={() => notif.contractId && handleValidate(notif.contractId)}
                       disabled={!notif.contractId}
-                      className="rounded-lg bg-green-500 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-green-600 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded-lg bg-slate-950 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Validate
                     </button>
                     <button
                       onClick={() => notif.contractId && handleReject(notif.contractId)}
                       disabled={!notif.contractId}
-                      className="rounded-lg bg-red-500 px-3 py-1.5 text-sm font-semibold text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       Reject
                     </button>
