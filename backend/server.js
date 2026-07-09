@@ -47,19 +47,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/contracts', contractRoutes);
 app.use('/api', referenceRoutes);
 
-// Serve the built frontend in production
-if (process.env.NODE_ENV === 'production') {
-  const frontendDist = path.join(__dirname, '..', 'frontend', 'dist');
-  app.use(express.static(frontendDist));
-  // All non-API routes return the React app
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(frontendDist, 'index.html'));
-  });
-} else {
-  app.use((req, res) => {
-    res.status(404).json({ message: 'Route not found' });
-  });
-}
+// Frontend is hosted separately (Vercel); return 404 for unknown routes
+app.use((req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
 
 app.use((error, req, res, next) => {
   console.error(error);
