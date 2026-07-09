@@ -1,5 +1,5 @@
 
-import logo from "../../dist/assets/images/tesca-short-logo.svg";
+const logo = "/tesca-short-logo.svg";
 function SiteFooter() {
   return (
     <footer id="footer" role="contentinfo" className="bg-[#181818] text-white w-full px-6 py-12 sm:px-10 lg:px-12 mt-12 border-t border-[#181818]/10">

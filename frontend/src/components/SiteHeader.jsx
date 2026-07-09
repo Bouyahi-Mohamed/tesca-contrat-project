@@ -1,4 +1,4 @@
-import logo from "../../dist/assets/images/tesca-short-logo.svg";
+const logo = "/tesca-short-logo.svg";
 function SiteHeader({
   title,
   description,
