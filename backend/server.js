@@ -21,10 +21,30 @@ const renewalIntervalMs = Number(process.env.RENEWAL_CHECK_INTERVAL_MS) || 36000
 const renewalDaysThreshold = Number(process.env.RENEWAL_ALERT_DAYS) || ALERT_WINDOW_DAYS;
 
 app.use(helmet());
-app.use(cors());
+
+// Allow requests from local dev and the deployed Vercel frontend
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  process.env.ALLOWED_ORIGIN,        // e.g. https://tesca-contrat-project.vercel.app
+].filter(Boolean);
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, Render health checks)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    // Allow any *.vercel.app subdomain (preview deployments)
+    if (/\.vercel\.app$/.test(origin)) return callback(null, true);
+    callback(new Error(`CORS blocked: ${origin}`));
+  },
+  credentials: true,
+}));
+
 app.use(compression());
 app.use(express.json({ limit: '1mb' }));
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
   setHeaders: (res, filePath) => {
