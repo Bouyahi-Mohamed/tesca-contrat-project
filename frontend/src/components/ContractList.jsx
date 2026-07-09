@@ -77,7 +77,7 @@ function verificationStyles(status) {
   }
 }
 
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/api$/, '');
+const API_BASE = (import.meta.env.VITE_API_URL || 'https://tesca-contrat-project.onrender.com/api').replace(/\/api$/, '');
 
 function ContractList({ contracts, user, onEdit, onDelete }) {
   const [viewingPdfContract, setViewingPdfContract] = useState(null);
